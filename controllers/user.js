@@ -60,39 +60,39 @@ const login = async (req, res, next) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.status(400).json("Please provide username and password");
+      return res.status(400).json({ error: "Please provide username and password" });
     }
 
     const user = await User.findOne({ username });
 
     if (!user) {
-      res.status(400).json("User does not exist");
-    } else {
-      //  compare password
-      const comparePassword = await bcrypt.compare(password, user.password);
-      if (!comparePassword) {
-        return res.status(400).json("Invalid credentials");
-      }
-
-      // generate token
-      const token = jwt.sign({ username: username }, process.env.JWT_SECRET, {
-        expiresIn: "10d",
-      });
-      // set cookie
-      res.cookie("token", token, { httpOnly: true, secure: true });
-
-      res.status(200).json({
-        success: true,
-        token,
-        username: username,
-        userId: user._id,
-        user,
-      });
+      return res.status(400).json({ error: "User does not exist" });
     }
+
+    const comparePassword = await bcrypt.compare(password, user.password);
+    if (!comparePassword) {
+      return res.status(400).json({ error: "Invalid credentials" });
+    }
+
+    const token = jwt.sign({ username: username }, process.env.JWT_SECRET, {
+      expiresIn: "10d",
+    });
+
+    // Setting the token in a cookie
+    res.cookie("token", token, { httpOnly: true, secure: true });
+
+    res.status(200).json({
+      success: true,
+      token,
+      username: username,
+      userId: user._id,
+      user,
+    });
   } catch (error) {
     next(new Error("Error logging in user"));
   }
 };
+
 
 const logoutUser = async (req, res, next) => {
   try {
