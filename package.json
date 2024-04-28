@@ -1,11 +1,11 @@
 {
-  "name": "server",
+  "name": "swiptory_backend",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run build",
+    "build": "echo \"Nothing to build\"",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
